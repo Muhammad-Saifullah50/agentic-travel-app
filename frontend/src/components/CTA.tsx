@@ -3,7 +3,7 @@ import PromptForm from "@/components/PromptForm";
 
 const CTA = () => {
   return (
-    <section className="py-24 px-6 relative overflow-hidden">
+    <section className="py-24 px-6 bg-background relative overflow-hidden">
       <div className="max-w-4xl mx-auto text-center relative z-10">
         <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-full px-4 py-2 mb-6">
           <Sparkles className="h-4 w-4 text-primary" />

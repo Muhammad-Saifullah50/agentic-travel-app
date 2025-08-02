@@ -1,10 +1,17 @@
-
 import { Sparkles } from "lucide-react";
 import PromptForm from "@/components/PromptForm";
+import Image from "next/image";
 
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <Image
+        src="/assets/hero.jpg"
+        alt="Travel Hero Background"
+        fill
+        className="object-cover object-center absolute inset-0 w-full h-full z-0"
+        priority
+      />
       
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">

@@ -45,7 +45,7 @@ const destinations = [
 
 const Destinations = () => {
 	return (
-		<section className="py-24 px-6">
+		<section className="py-24 px-6 bg-background">
 			<div className="max-w-7xl mx-auto">
 				<div className="text-center mb-16">
 					<Badge variant="secondary" className="mb-4">
