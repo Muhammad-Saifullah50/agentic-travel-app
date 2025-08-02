@@ -15,7 +15,7 @@ external_client = AsyncOpenAI(
     base_url=base_url,
 )
 
-""""This is the model importted from this file"""
+""""This is the model imported from this file"""
 
 gemini_model = OpenAIChatCompletionsModel(
     model='gemini-2.0-flash',

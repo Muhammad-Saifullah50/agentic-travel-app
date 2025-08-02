@@ -4,23 +4,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
 
 interface PromptFormProps {
-  variant?: "hero" | "cta";
+  variant?: "hero" | "cta" | "chat";
   placeholder?: string;
   className?: string;
 }
 
 const PromptForm = ({ 
   variant = "hero", 
-  placeholder = "Where would you like to go? (e.g., Tokyo for 5 days, romantic getaway in Paris)",
+  placeholder = "Where would you like to go? (e.g., Tokyo for 5 days)",
   className 
 }: PromptFormProps) => {
   const [prompt, setPrompt] = useState("");
-  
+  const pathname = usePathname();
+  const router = useRouter();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (prompt.trim()) {
+      if (pathname === "/") {
+        router.push(`/chat?query=${encodeURIComponent(prompt)}`);
+        return;
+      }
       console.log("Planning trip for:", prompt);
       // Here you would integrate with your AI planning service
     }
@@ -31,6 +38,7 @@ const PromptForm = ({
       onSubmit={handleSubmit} 
       className={cn(
         "w-full max-w-2xl mx-auto",
+        variant === "chat" ? "fixed bottom-0 left-0 right-0 z-50 border-border shadow-lg p-4 px-10 max-w-7xl mx-auto" : "",
         className
       )}
     >
@@ -60,7 +68,7 @@ const PromptForm = ({
           disabled={!prompt.trim()}
           className={cn(
             "flex-shrink-0 group px-6",
-            variant === "hero" ? "shadow-glow" : ""
+            variant === "hero" ? "shadow-glow" : variant === 'chat' ? 'bg-gradient-ocean': ""
           )}
         >
           Plan Trip
