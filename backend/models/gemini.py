@@ -13,6 +13,7 @@ if not base_url or not api_key:
 external_client = AsyncOpenAI(
     api_key=api_key,
     base_url=base_url,
+    
 )
 
 """"This is the model imported from this file"""
@@ -25,5 +26,6 @@ gemini_model = OpenAIChatCompletionsModel(
 config = RunConfig(
     model=gemini_model,
     model_provider=external_client,
-    tracing_disabled=True
+    tracing_disabled=True,
+    
 )

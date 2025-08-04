@@ -21,7 +21,7 @@ const MessageBox = ({
 		)}
 		<div
 			className={cn(
-				"relative px-6 py-4 rounded-3xl text-base",
+				"relative px-6 py-3 rounded-3xl text-base",
 				"transition-all",
 			
 				role === "user" ? "ml-2 bg-gradient-sunset text-black" : "mr-2 text-white bg-gradient-ocean"

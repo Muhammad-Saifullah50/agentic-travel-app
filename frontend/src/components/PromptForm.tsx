@@ -10,14 +10,18 @@ interface PromptFormProps {
   variant?: "hero" | "cta" | "chat";
   placeholder?: string;
   className?: string;
+  query?: string;
+  onSendMessage?: (prompt: string, clear: () => void) => void;
 }
 
 const PromptForm = ({ 
   variant = "hero", 
   placeholder = "Where would you like to go? (e.g., Tokyo for 5 days)",
-  className 
+  className,
+  query,
+  onSendMessage
 }: PromptFormProps) => {
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(query || "");
   const pathname = usePathname();
   const router = useRouter();
 
@@ -26,6 +30,10 @@ const PromptForm = ({
     if (prompt.trim()) {
       if (pathname === "/") {
         router.push(`/chat?query=${encodeURIComponent(prompt)}`);
+        return;
+      }
+      if (onSendMessage) {
+        onSendMessage(prompt, () => setPrompt(""));
         return;
       }
       console.log("Planning trip for:", prompt);
@@ -71,7 +79,7 @@ const PromptForm = ({
             variant === "hero" ? "shadow-glow" : variant === 'chat' ? 'bg-gradient-ocean': ""
           )}
         >
-          Plan Trip
+          {variant === "chat" ? "Send Message" : "Plan Trip"}
           <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
         </Button>
       </div>
