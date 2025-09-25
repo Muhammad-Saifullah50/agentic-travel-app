@@ -1,0 +1,19 @@
+
+from pydantic import BaseModel
+from typing import List, Optional
+
+class DailyForecast(BaseModel):
+    date: str
+    condition: Optional[str]
+    max_temp_c: Optional[float]
+    min_temp_c: Optional[float]
+    chance_of_rain_pct: Optional[int]
+    avg_humidity: Optional[int]
+    sunrise: Optional[str]
+    sunset: Optional[str]
+
+class WeatherResponse(BaseModel):
+    location: str
+    daily_forecast: List[DailyForecast]
+
+    # something wrong with the requests library

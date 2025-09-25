@@ -1,86 +1,45 @@
 from agents import function_tool
-import requests_cache
-from retry_requests import retry  # type: ignore
-import openmeteo_requests  # type: ignore
-from typing import Dict, Any
-import logging
-from utils.format_date import format_date
+import requests
+from utils.extract_forecast_data import extract_forecast_data
+import os
+from dotenv import load_dotenv
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 @function_tool
-def get_weather(location: str, start_date: str, end_date: str, latitude: float, longitude: float) -> str:
+def get_weather(location: str) -> str:
     try:
 
+        load_dotenv()
 
-        formatted_start_date = format_date(start_date)
-        formatted_end_date = format_date(end_date)
+        api_key = os.getenv("WEATHER_API_KEY")
 
-        # Setup the Open-Meteo API client with cache and retry on error
-        cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
-        retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
-        openmeteo = openmeteo_requests.Client(session=retry_session)
+        url = "https://api.weatherapi.com/v1/forecast.json"
 
-        # Make sure all required weather variables are listed here
-        # The order of variables in hourly or daily is important to assign them correctly below
-        url = "https://api.open-meteo.com/v1/forecast"
-        params: Dict[str, Any] = {
-            "latitude": latitude,
-            "longitude": longitude,
-            "daily": [
-                "sunrise", "temperature_2m_max", "temperature_2m_min", "precipitation_sum", "precipitation_hours", "precipitation_probability_max", "uv_index_max", "sunset", "sunshine_duration", "daylight_duration", "apparent_temperature_max", "apparent_temperature_min"
-            ],
-            "start_date": formatted_start_date,
-            "end_date": formatted_end_date,
-            "timezone": "auto"
-        }
+        params = {"key": api_key, "q": location, "days": 3}
 
-        responses = openmeteo.weather_api(url, params=params)
-        response = responses[0]
-        logger.debug(f"Weather response: {response}")
+        response = requests.get(url, params=params)
 
-        # Process daily data. The order of variables needs to be the same as requested.
-        daily = response.Daily()
-        daily_sunrise = daily.Variables(0).ValuesInt64AsNumpy()
-        daily_temperature_2m_max = daily.Variables(1).ValuesAsNumpy()
-        daily_temperature_2m_min = daily.Variables(2).ValuesAsNumpy()
-        daily_precipitation_sum = daily.Variables(3).ValuesAsNumpy()
-        daily_precipitation_hours = daily.Variables(4).ValuesAsNumpy()
-        daily_precipitation_probability_max = daily.Variables(5).ValuesAsNumpy()
-        daily_uv_index_max = daily.Variables(6).ValuesAsNumpy()
-        daily_sunset = daily.Variables(7).ValuesInt64AsNumpy()
-        daily_sunshine_duration = daily.Variables(8).ValuesAsNumpy()
-        daily_daylight_duration = daily.Variables(9).ValuesAsNumpy()
-        daily_apparent_temperature_max = daily.Variables(10).ValuesAsNumpy()
-        daily_apparent_temperature_min = daily.Variables(11).ValuesAsNumpy()
+        extracted_forecast = extract_forecast_data(response.json())
 
-        import pandas as pd
-        daily_data = {
-            "date": pd.date_range(
-                start=pd.to_datetime(daily.Time(), unit="s", utc=True),
-                end=pd.to_datetime(daily.TimeEnd(), unit="s", utc=True),
-                freq=pd.Timedelta(seconds=daily.Interval()),
-                inclusive="left"
-            )
-        }
-        daily_data["sunrise"] = daily_sunrise
-        daily_data["temperature_2m_max"] = daily_temperature_2m_max
-        daily_data["temperature_2m_min"] = daily_temperature_2m_min
-        daily_data["precipitation_sum"] = daily_precipitation_sum
-        daily_data["precipitation_hours"] = daily_precipitation_hours
-        daily_data["precipitation_probability_max"] = daily_precipitation_probability_max
-        daily_data["uv_index_max"] = daily_uv_index_max
-        daily_data["sunset"] = daily_sunset
-        daily_data["sunshine_duration"] = daily_sunshine_duration
-        daily_data["daylight_duration"] = daily_daylight_duration
-        daily_data["apparent_temperature_max"] = daily_apparent_temperature_max
-        daily_data["apparent_temperature_min"] = daily_apparent_temperature_min
-        
-        return f'Daily weather data for {location} from {formatted_start_date} to {formatted_end_date}:\n' + \
-               '\n'.join([f"{date.strftime('%Y-%m-%d')}: Max Temp: {max_temp}°C, Min Temp: {min_temp}°C, Precipitation: {precipitation}mm" 
-                           for date, max_temp, min_temp, precipitation in zip(daily_data["date"], daily_data["temperature_2m_max"], 
-                                                                               daily_data["temperature_2m_min"], daily_data["precipitation_sum"])])
+        # Get the location from the first entry to use in the header
+        location = extracted_forecast[0].get("City_Country")
+
+        # Use a list comprehension to format each day's data
+        formatted_daily_data = [
+            f"Date: {day['Date']}, Condition: {day['Condition']}\n"
+            f"    Max Temp: {day['Max_Temp_C']}°C, Min Temp: {day['Min_Temp_C']}°C\n"
+            f"    Chance of Rain: {day['Chance_of_Rain_pct']}%, Avg Humidity: {day['Avg_Humidity']}\n"
+            f"    Sunrise: {day['Sunrise']}, Sunset: {day['Sunset']}"
+            for day in extracted_forecast
+        ]
+
+        # Join the strings with newlines and add the header
+        final_string = f"Daily weather data for {location}:\n" + "\n".join(
+            formatted_daily_data
+        )
+
+        return final_string
+
     except Exception as e:
-        logger.error(f"Error fetching weather data: {e}")
+        print(f"Error fetching weather data: {e}")
         return f"An error occurred while fetching the weather data: {str(e)}"
