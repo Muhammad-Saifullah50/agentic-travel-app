@@ -1,7 +1,8 @@
+from agents import function_tool
 import requests
 from typing import Dict
 
-
+@function_tool
 def get_coordinates(location: str) -> Dict[str, float | str]:
     """
     Get the coordinates (latitude and longitude) for a given location using Open-Meteo Geocoding API.

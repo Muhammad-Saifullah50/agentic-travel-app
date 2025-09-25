@@ -4,18 +4,15 @@ from retry_requests import retry  # type: ignore
 import openmeteo_requests  # type: ignore
 from typing import Dict, Any
 import logging
-from utils.get_coordinates import get_coordinates
 from utils.format_date import format_date
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 @function_tool
-def get_weather(location: str, start_date: str, end_date: str) -> str:
+def get_weather(location: str, start_date: str, end_date: str, latitude: float, longitude: float) -> str:
     try:
-        coordinates = get_coordinates(location)
-        latitude = coordinates.get('latitude')
-        longitude = coordinates.get('longitude')
+
 
         formatted_start_date = format_date(start_date)
         formatted_end_date = format_date(end_date)
