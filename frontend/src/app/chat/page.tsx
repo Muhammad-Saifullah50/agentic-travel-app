@@ -68,7 +68,7 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 					<MessageBox
 						key={idx}
 						role={msg.role as "user" | "assistant"}
-						message={msg.content}
+						text={msg.content}
 					/>
 				))}
 			</div>

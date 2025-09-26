@@ -1,6 +1,6 @@
 import json
 
-def extract_forecast_data(json_string):
+def extract_forecast_data(json_string:str) -> list[dict[str, str | int | None]]:
     """
     Extracts relevant forecast data for 3 days from the API response string.
     """
@@ -18,7 +18,7 @@ def extract_forecast_data(json_string):
     # The 'forecastday' list holds the daily forecast data.
     forecast_days = data.get('forecast', {}).get('forecastday', [])[:3]
 
-    extracted_data = []
+    extracted_data:list[dict[str, str | int | None]] = []
 
     # 3. Iterate over the forecast days and extract desired fields
     for day_data in forecast_days:
@@ -26,15 +26,15 @@ def extract_forecast_data(json_string):
         astro = day_data.get('astro', {})
 
         extracted_data.append({
-            "City_Country": city_country,
-            "Date": day_data.get('date'),
-            "Max_Temp_C": day_summary.get('maxtemp_c'),
-            "Min_Temp_C": day_summary.get('mintemp_c'),
-            "Condition": day_summary.get('condition', {}).get('text'),
-            "Avg_Humidity": day_summary.get('avghumidity'),
-            "Chance_of_Rain_pct": day_summary.get('daily_chance_of_rain'),
-            "Sunrise": astro.get('sunrise'),
-            "Sunset": astro.get('sunset')
+            "city_country": city_country,
+            "date": day_data.get('date'),
+            "max_temp_c": day_summary.get('maxtemp_c'),
+            "min_temp_c": day_summary.get('mintemp_c'),
+            "condition": day_summary.get('condition', {}).get('text'),
+            "avg_humidity": day_summary.get('avghumidity'),
+            "chance_of_rain_pct": day_summary.get('daily_chance_of_rain'),
+            "sunrise": astro.get('sunrise'),
+            "sunset": astro.get('sunset'),
         })
 
     return extracted_data

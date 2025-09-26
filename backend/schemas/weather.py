@@ -11,9 +11,9 @@ class DailyForecast(BaseModel):
     avg_humidity: Optional[int]
     sunrise: Optional[str]
     sunset: Optional[str]
+    location: Optional[str]
 
 class WeatherResponse(BaseModel):
-    location: str
-    daily_forecast: List[DailyForecast]
-
-    # something wrong with the requests library
+    message: str
+    type: str = "weather"
+    data: List[DailyForecast]
