@@ -1,11 +1,12 @@
-from pydantic import BaseModel, HttpUrl
+from typing import Optional
+from pydantic import AnyUrl, BaseModel
 
 class Place(BaseModel):
     id: int
     title: str
     description: str
     price: str | int
-    thumbnail: HttpUrl
+    thumbnail: Optional[AnyUrl] = None  
 
 
 class PlacesResponse(BaseModel):

@@ -27,7 +27,7 @@ def get_places(city: str) -> List[dict[str, str | int | None]]:
         city (str): The name of the city for which to retrieve popular destinations.
     Returns:
         List[dict]: A list of dictionaries, each containing details about a popular destination,
-        such as 'id', 'title', 'description', 'link', 'hotel_price', 'extracted_hotel_price', and 'thumbnail'.
+        such as 'id', 'title', 'description', 'price' and 'thumbnail'.
         If the API request fails, returns a list with a single dictionary containing an 'error' key.
     """
 
@@ -45,12 +45,13 @@ def get_places(city: str) -> List[dict[str, str | int | None]]:
 
     popular_destinations_list = data.get("top_sights", {}).get("sights", [])
     print(popular_destinations_list, 'popular_destinations_list')
+
     for idx, item in enumerate(popular_destinations_list):
         result = {
             "id": idx,
             "title": item.get("title"),
-            "description": item["description"],
-            "price": item["price"],
+            "description": item.get("description"),
+            "price": item.get("price"),
             "thumbnail": item["thumbnail"],
         }
 
@@ -59,5 +60,3 @@ def get_places(city: str) -> List[dict[str, str | int | None]]:
     return results
 
 
-
-#  this is returning fine 

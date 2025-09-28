@@ -3,6 +3,15 @@ import { Bot, User } from "lucide-react";
 import WeatherComponent from "./WeatherComponent";
 import ImageGallery from "./ImageGallery";
 
+function cleanMarkdownJson(md: string): string {
+	// Remove Markdown code fences like ```json ... ```
+	return md
+		.trim()
+		.replace(/^```(?:json)?/, "") // remove starting ```json or ```
+		.replace(/```$/, "") // remove ending ```
+		.trim();
+}
+
 const MessageBox = ({
 	role,
 	text,
@@ -10,17 +19,24 @@ const MessageBox = ({
 	role: "user" | "assistant";
 	text: string;
 }) => {
+	// Try to clean markdown before parsing
+	let cleaned = text;
+	if (text.trim().startsWith("```")) {
+		cleaned = cleanMarkdownJson(text);
+	}
+
 	let parsed: Record<string, any> | null = null;
 	let isJson = false;
+
 	try {
-		parsed = JSON.parse(text);
+		parsed = JSON.parse(cleaned);
 		isJson = typeof parsed === "object" && parsed !== null;
 	} catch (e) {
 		isJson = false;
 	}
 
 	let type = isJson && parsed?.type ? parsed.type : null;
-
+console.log(parsed)
 	return (
 		<div
 			className={cn(
@@ -46,18 +62,17 @@ const MessageBox = ({
 			>
 				{isJson ? (
 					<>
-						<p className="mb-2 font-semibold">{parsed.message ?? ""}</p>
-						{type === "weather" && parsed.data && (
+						<p className="mb-2 font-semibold">{parsed?.message ?? ""}</p>
+						{type === "weather" && parsed?.data && (
 							<WeatherComponent data={parsed.data} />
 						)}
-						{type === "places" && parsed.data && (
+						{type === "places" && parsed?.data && (
 							<ImageGallery data={parsed.data} />
 						)}
 					</>
 				) : (
 					text
 				)}
-				{/* image gallery here  */}
 			</div>
 			{role === "user" && (
 				<div className="flex flex-col items-center ml-2 justify-center">
