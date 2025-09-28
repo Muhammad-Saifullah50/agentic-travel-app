@@ -2,12 +2,10 @@ from pydantic import BaseModel, HttpUrl
 
 class Place(BaseModel):
     id: int
-    image_url: HttpUrl
     title: str
     description: str
-    rating: float
-    location: str
-    category: str
+    price: str | int
+    thumbnail: HttpUrl
 
 
 class PlacesResponse(BaseModel):

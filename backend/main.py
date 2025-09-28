@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from openai.types.responses import ResponseTextDeltaEvent
 
+from agents import enable_verbose_stdout_logging, set_tracing_disabled
 
 from agents import Runner
 from ai_agents.triage_agent import triage_agent
@@ -33,6 +34,8 @@ async def send_message(request: Request):
         return StreamingResponse(error_stream(), media_type="text/event-stream")
 
     async def event_stream():
+        enable_verbose_stdout_logging()
+        set_tracing_disabled(True) 
         result =  Runner.run_streamed(
             triage_agent,
             input=messages,

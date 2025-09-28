@@ -1,79 +1,63 @@
-
 from agents import function_tool
 import requests
 from dotenv import load_dotenv
 import os
-from typing import List, Dict
+from typing import List
+import logging
+import json
+
+# Configure logging once
+logging.basicConfig(
+    level=logging.DEBUG,  # or INFO in production
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-geoapify_api_key: str | None = os.getenv("GEOAPIFY_API_KEY")
-unsplash_access_key: str | None = os.getenv("UNSPLASH_ACCESS_KEY")
-
-if not geoapify_api_key:
-    raise ValueError("Geoapify API key is not set")
-if not unsplash_access_key:
-    raise ValueError("Unsplash access key is not set")
-
+serpapi_key: str | None = os.getenv("SERPAPI_KEY")
+if not serpapi_key:
+    raise ValueError("SerpAPI key is not set")
 
 @function_tool
-def get_places(city: str, interests: List[str]) -> List[Dict[str, object]]:
-    print(f"get_places called with city={city}, interests={interests}")
-    url = "https://api.geoapify.com/v2/places"
+def get_places(city: str) -> List[dict[str, str | int | None]]:
+    """
+    Fetches popular travel destinations for a given city using the SerpAPI Google search engine.
+    Args:
+        city (str): The name of the city for which to retrieve popular destinations.
+    Returns:
+        List[dict]: A list of dictionaries, each containing details about a popular destination,
+        such as 'id', 'title', 'description', 'link', 'hotel_price', 'extracted_hotel_price', and 'thumbnail'.
+        If the API request fails, returns a list with a single dictionary containing an 'error' key.
+    """
 
-    # Build categories string for Geoapify
-    categories = ",".join(interests) if interests else ""
 
-    params = {
-        "categories": categories,
-        "filter": f"place:{city}",
-        "limit": 10,
-        "apiKey": geoapify_api_key
-    }
+    query = f"{city} Destinations"
+    url = f"https://serpapi.com/search.json?engine=google&q={query}&api_key={serpapi_key}"
+    response = requests.get(url)
 
-    response = requests.get(url, params=params)
     if response.status_code != 200:
+        logger.error(f"API request failed with status {response.status_code}")
         return [{"error": f"API request failed with status {response.status_code}"}]
 
     data = response.json()
-    api_results = data.get("features", [])
+    results = []
 
-    results: List[Dict[str, object]] = []
-    for item in api_results:
-        props: Dict[str, object] = item.get("properties", {})
-        title = str(props.get("name")) if props.get("name") is not None else ""
-        description = str(props.get("formatted")) if props.get("formatted") is not None else str(props.get("address_line2", ""))
-        rating = None  # Geoapify does not provide ratings
-        location = str(props.get("city")) if props.get("city") is not None else str(props.get("address_line1", ""))
-        categories = props.get("categories")
-        if isinstance(categories, list) and categories:
-            category = categories[0] if isinstance(categories[0], str) else str(categories[0])
-        else:
-            category = None
-
-        # Retrieve image from Unsplash based on title
-        image_url = None
-        if title:
-            unsplash_url = f"https://api.unsplash.com/search/photos?query={title}&client_id={unsplash_access_key}"
-            try:
-                unsplash_resp = requests.get(unsplash_url)
-                if unsplash_resp.status_code == 200:
-                    unsplash_data = unsplash_resp.json()
-                    if unsplash_data.get("results"):
-                        image_url = unsplash_data["results"][0]["urls"]["regular"]
-            except Exception:
-                image_url = None
-
-        result: Dict[str, object] = {
-            "id": props.get("place_id"),
-            "title": title,
-            "description": description,
-            "rating": rating,
-            "location": location,
-            "category": category,
-            "image_url": image_url,
+    popular_destinations_list = data.get("top_sights", {}).get("sights", [])
+    print(popular_destinations_list, 'popular_destinations_list')
+    for idx, item in enumerate(popular_destinations_list):
+        result = {
+            "id": idx,
+            "title": item.get("title"),
+            "description": item["description"],
+            "price": item["price"],
+            "thumbnail": item["thumbnail"],
         }
-        if result["title"]:
-            results.append(result)
 
+        results.append(result)
+    print(results, 'results')
     return results
+
+
+
+#  this is returning fine 
