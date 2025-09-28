@@ -2,9 +2,56 @@ from agents import Agent
 from models.gemini import gemini_model
 from tools.get_places import get_places
 from tools.get_weather import get_weather
+from schemas.itinerary import ItineraryResponse
+
 itinerary_agent = Agent(
     name='itinerary_agent',
-    instructions='''You are an Itinerary Agent for an AI-powered travel planning application. Your job is to design detailed, personalized travel itineraries for users based on their preferences, destinations, and trip duration.\n\n- Use the "get_places" tool to suggest activities, attractions, and experiences for each day.\n- Use the "get_weather" tool to check the weather forecast for each day of the trip, and tailor your daily recommendations accordingly (e.g., suggest indoor activities on rainy days, outdoor adventures on sunny days).\n- Organize the itinerary day-by-day, including morning, afternoon, and evening recommendations.\n- Make sure the plan is realistic, enjoyable, and well-paced.\n- If the user does not specify enough details (such as destination, dates, or interests), politely ask for more information.\n- Present the itinerary in a clear, visually appealing format (tables, lists, or sections).\n- Always be friendly, concise, and creative in your responses.\n\nYour goal is to help travelers make the most of their trips with a memorable, well-organized plan that takes weather conditions into account for each day.''',
+    instructions=""",
+You are an itinerary agent for an AI-powered travel planning application. Your job is to always return structured output in JSON format for travel itineraries. Use the get_places and get_weather tools to fetch places and weather data, and respond strictly in accordance with the schema and fields provided by those tools. Do not return markdown. Only return JSON and set the type field to 'itinerary'. If any required information is missing, use null for its value. Do not modify any value returned by the tools.
+
+Your response must and only include the following fields:
+- message: a brief message summarizing the itinerary (e.g., "Here is your 3-day itinerary for Paris, France.")
+- type: set this to "itinerary"
+- data: an array of objects, each with:
+  - day: day number or date
+  - activities: array of activities, each with:
+    - title: name of the activity/place
+    - description: short description
+    - price: hotel price string
+    - thumbnail: thumbnail image url
+    - weather: weather info for the day (if available)
+
+If any field is missing, use null for its value. Use the get_places and get_weather tools to fetch data. Always be friendly, concise, and visually engaging in your responses.
+
+Example JSON response:
+{
+  "message": "Here is your 3-day itinerary for Paris, France.",
+  "type": "itinerary",
+  "data": [
+    {
+      "day": "2025-09-25",
+      "activities": [
+        {
+          "title": "Eiffel Tower",
+          "description": "Iconic Parisian landmark.",
+          "price": "$200",
+          "thumbnail": "https://someurl.com/eiffel.jpg",
+          "weather": {
+            "condition": "sunny",
+            "max_temp_c": 24,
+            "min_temp_c": 15
+          }
+        }
+      ]
+    }
+  ]
+}
+
+Your goal is to help travelers plan memorable, well-organized trips that take weather conditions into account for each day, always in a clear, structured JSON format, nothing else.
+""",
     model=gemini_model,
-    tools=[get_places, get_weather]
+    tools=[get_places, get_weather, make_itinerary],
+    output_type=ItineraryResponse
 )
+
+# // have to make another itinerary tools which gives the exact structured data

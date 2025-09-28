@@ -3,13 +3,50 @@ import { Bot, User } from "lucide-react";
 import WeatherComponent from "./WeatherComponent";
 import ImageGallery from "./ImageGallery";
 
-function cleanMarkdownJson(md: string): string {
-	// Remove Markdown code fences like ```json ... ```
-	return md
-		.trim()
-		.replace(/^```(?:json)?/, "") // remove starting ```json or ```
-		.replace(/```$/, "") // remove ending ```
-		.trim();
+function extractJsonFromMarkdown(text: string): { json: any; cleanText: string } | null {
+	const trimmedText = text.trim();
+	
+	// Pattern to match JSON code blocks with optional language specifier
+	const codeBlockPattern = /^```(?:json|javascript|js)?\s*\n?([\s\S]*?)\n?```$/;
+	const match = trimmedText.match(codeBlockPattern);
+	
+	if (match) {
+		try {
+			const jsonString = match[1].trim();
+			const parsed = JSON.parse(jsonString);
+			return { json: parsed, cleanText: jsonString };
+		} catch (e) {
+			console.warn('Failed to parse JSON from code block:', e);
+		}
+	}
+	
+	// Try to find JSON within the text (even if not in code blocks)
+	const jsonPattern = /\{[\s\S]*\}/;
+	const jsonMatch = trimmedText.match(jsonPattern);
+	
+	if (jsonMatch) {
+		try {
+			const jsonString = jsonMatch[0];
+			const parsed = JSON.parse(jsonString);
+			return { json: parsed, cleanText: jsonString };
+		} catch (e) {
+			console.warn('Failed to parse JSON from text:', e);
+		}
+	}
+	
+	// Try parsing the entire text as JSON
+	try {
+		const parsed = JSON.parse(trimmedText);
+		return { json: parsed, cleanText: trimmedText };
+	} catch (e) {
+		// Not JSON, return null
+	}
+	
+	return null;
+}
+
+function isValidJsonObject(obj: any): boolean {
+	return typeof obj === "object" && obj !== null && !Array.isArray(obj);
 }
 
 const MessageBox = ({
@@ -19,24 +56,17 @@ const MessageBox = ({
 	role: "user" | "assistant";
 	text: string;
 }) => {
-	// Try to clean markdown before parsing
-	let cleaned = text;
-	if (text.trim().startsWith("```")) {
-		cleaned = cleanMarkdownJson(text);
-	}
+	const jsonResult = extractJsonFromMarkdown(text);
+	const isJson = jsonResult !== null && isValidJsonObject(jsonResult.json);
+	const parsed = jsonResult?.json;
+	const type = isJson && parsed?.type ? parsed.type : null;
+	
+	// Debug logging
+	console.log('Original text:', text);
+	console.log('JSON extraction result:', jsonResult);
+	console.log('Parsed object:', parsed);
+	console.log('Type detected:', type);
 
-	let parsed: Record<string, any> | null = null;
-	let isJson = false;
-
-	try {
-		parsed = JSON.parse(cleaned);
-		isJson = typeof parsed === "object" && parsed !== null;
-	} catch (e) {
-		isJson = false;
-	}
-
-	let type = isJson && parsed?.type ? parsed.type : null;
-console.log(parsed)
 	return (
 		<div
 			className={cn(
@@ -62,16 +92,28 @@ console.log(parsed)
 			>
 				{isJson ? (
 					<>
-						<p className="mb-2 font-semibold">{parsed?.message ?? ""}</p>
+						{parsed?.message && (
+							<p className="mb-2 font-semibold">{parsed.message}</p>
+						)}
 						{type === "weather" && parsed?.data && (
 							<WeatherComponent data={parsed.data} />
 						)}
 						{type === "places" && parsed?.data && (
 							<ImageGallery data={parsed.data} />
 						)}
+						{type === "itinerary" && parsed?.data && (
+							<p>itinerary</p>
+							// have to make itinerary component
+						)}
+						{/* Fallback for JSON without specific type */}
+						{!type && (
+							<pre className="text-sm bg-black/20 p-2 rounded overflow-auto">
+								{JSON.stringify(parsed, null, 2)}
+							</pre>
+						)}
 					</>
 				) : (
-					text
+					<div className="whitespace-pre-wrap">{text}</div>
 				)}
 			</div>
 			{role === "user" && (
@@ -84,3 +126,6 @@ console.log(parsed)
 };
 
 export default MessageBox;
+
+// weather display
+// itenary display

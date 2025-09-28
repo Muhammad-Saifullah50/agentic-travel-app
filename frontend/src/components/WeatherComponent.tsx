@@ -6,7 +6,7 @@ interface WeatherComponentProps {
 
 const WeatherComponent: React.FC<WeatherComponentProps> = ({ data }) => {
 
-    if (!data || data.length === 0) return
+    // if (!data || data.length === 0) return
   return (
     <div className="mt-2">
       <table className="w-full text-sm bg-white bg-opacity-10 rounded-xl overflow-hidden">
