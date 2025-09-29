@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Bot, User } from "lucide-react";
 import WeatherComponent from "./WeatherComponent";
 import ImageGallery from "./ImageGallery";
+import ItineraryComponent from "./ItineraryComponent";
 
 function extractJsonFromMarkdown(text: string): { json: any; cleanText: string } | null {
 	const trimmedText = text.trim();
@@ -102,8 +103,7 @@ const MessageBox = ({
 							<ImageGallery data={parsed.data} />
 						)}
 						{type === "itinerary" && parsed?.data && (
-							<p>itinerary</p>
-							// have to make itinerary component
+							<ItineraryComponent data={parsed.data} />
 						)}
 						{/* Fallback for JSON without specific type */}
 						{!type && (

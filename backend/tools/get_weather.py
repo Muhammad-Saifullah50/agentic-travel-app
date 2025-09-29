@@ -9,6 +9,24 @@ load_dotenv()
 
 @function_tool
 def get_weather(location: str) :
+    """  
+        Fetches a 3-day weather forecast for a specified location using the WeatherAPI.
+        Args:
+            location (str): The name of the location (city, region, or country) for which to retrieve weather data.
+        Returns:
+            list[dict]: 
+                - On success: A list of dictionaries, each containing weather details for a day, including:
+                    - 'date' (str): Date of the forecast.
+                    - 'condition' (str): Weather condition description.
+                    - 'max_temp_c' (float|int|None): Maximum temperature in Celsius.
+                    - 'min_temp_c' (float|int|None): Minimum temperature in Celsius.
+                    - 'chance_of_rain_pct' (int|None): Chance of rain in percent.
+                    - 'avg_humidity' (float|int|None): Average humidity percentage.
+                    - 'sunrise' (str|None): Sunrise time.
+                    - 'sunset' (str|None): Sunset time.
+                    - 'location' (str): Location name (city and country).
+                - On error: A list with a single dictionary containing an 'error' key and a descriptive message.
+        """
 
     try:
         api_key = os.getenv("WEATHER_API_KEY")
@@ -50,8 +68,10 @@ def get_weather(location: str) :
                     "location": city_country,
                 }
                 results.append(result)
+
             except Exception:
                 continue  # Skip malformed items
+        print(results, 'weather results')
         return results
 
     except Exception as e:

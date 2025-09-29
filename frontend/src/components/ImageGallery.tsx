@@ -11,7 +11,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ data }) => {
       {data.map((place, idx) => (
         <div key={idx} className="bg-white bg-opacity-10 rounded-xl p-3 flex flex-col items-center">
           {place.thumbnail && (
-            <img src={place.thumbnail ?? '/assets/hero-beach.jpg'}
+            <Image src={place.thumbnail ?? '/assets/hero-beach.jpg'}
              alt={place.title ?? "Place image"} className="w-full h-32 object-cover rounded-lg mb-2"
              width={100}
              height={100}

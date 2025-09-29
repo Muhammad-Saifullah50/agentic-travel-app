@@ -19,7 +19,6 @@ class Weather(BaseModel):
     sunset: str
     location: str
 
-
 class ItineraryResponse(BaseModel):
     message: str
     type: str = "itinerary"

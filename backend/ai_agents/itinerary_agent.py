@@ -2,12 +2,13 @@ from agents import Agent
 from models.gemini import gemini_model
 from tools.get_places import get_places
 from tools.get_weather import get_weather
+from tools.make_itinerary import make_itinerary
 from schemas.itinerary import ItineraryResponse
 
 itinerary_agent = Agent(
     name='itinerary_agent',
     instructions=""",
-You are an itinerary agent for an AI-powered travel planning application. Your job is to always return structured output in JSON format for travel itineraries. Use the get_places and get_weather tools to fetch places and weather data, and respond strictly in accordance with the schema and fields provided by those tools. Do not return markdown. Only return JSON and set the type field to 'itinerary'. If any required information is missing, use null for its value. Do not modify any value returned by the tools.
+You are an itinerary agent for an AI-powered travel planning application. Your job is to always return structured output in JSON format for travel itineraries. Use the get_places and get_weather tools to fetch places and weather data, then pass the outputs from these tools to 'the make_itinerary' tool. Only return JSON and set the type field to 'itinerary'. If any required information is missing, use null for its value. Do not modify any value returned by the tools.
 
 Your response must and only include the following fields:
 - message: a brief message summarizing the itinerary (e.g., "Here is your 3-day itinerary for Paris, France.")
@@ -53,5 +54,3 @@ Your goal is to help travelers plan memorable, well-organized trips that take we
     tools=[get_places, get_weather, make_itinerary],
     output_type=ItineraryResponse
 )
-
-# // have to make another itinerary tools which gives the exact structured data
