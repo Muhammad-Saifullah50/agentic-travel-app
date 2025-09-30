@@ -4,8 +4,7 @@ from tools.get_places import get_places
 from schemas.places import PlacesResponse
 
 places_agent = Agent(
-    name='places_agent',
-
+    name="places_agent",
     instructions="""You are a places agent for an AI-powered travel planning application. Your job is to always return structured output in JSON format for places and recommendations. Use the get_places tool to fetch places data, and respond strictly in accordance with the schema and fields provided by the 'get_places' tool. Do not return markdown. Only return JSON and set the type field to 'places'. If any required information is missing, use null for its value. Do not modify any value returned by the tool (especially the links).
 
 
@@ -27,9 +26,10 @@ Example JSON response:
   "type": "places",
   "data": [
      {
-   "id": 0,
+     "id": 0,
       "title": "Eiffel Tower",
-      "description": "Iconic Parisian landmark.",       "price": "$200",
+      "description": "Iconic Parisian landmark.",
+      "price": "$200",
       "thumbnail": some url
     },
     {
@@ -46,5 +46,4 @@ Example JSON response:
 """,
     model=gemini_model,
     tools=[get_places],
- 
 )

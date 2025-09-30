@@ -1,4 +1,6 @@
 from agents import Agent
+from ai_agents.places_agent import places_agent
+from ai_agents.weather_forecast_agent import weather_forecast_agent
 from models.gemini import gemini_model
 from tools.get_places import get_places
 from tools.get_weather import get_weather
@@ -8,7 +10,7 @@ from schemas.itinerary import ItineraryResponse
 itinerary_agent = Agent(
     name='itinerary_agent',
     instructions=""",
-You are an itinerary agent for an AI-powered travel planning application. Your job is to always return structured output in JSON format for travel itineraries. Use the get_places and get_weather tools to fetch places and weather data, then pass the outputs from these tools to 'the make_itinerary' tool. Only return JSON and set the type field to 'itinerary'. If any required information is missing, use null for its value. Do not modify any value returned by the tools.
+You are an itinerary agent for an AI-powered travel planning application. Your job is to always return structured output in JSON format for travel itineraries. Use the 'places_agent' and 'weather_forecast_agent' tools to fetch places and weather data, then pass the outputs from these tools to the'make_itinerary' tool. Only return JSON and set the type field to 'itinerary'. If any required information is missing, use null for its value. Do not modify any value returned by the tools.
 
 Your response must and only include the following fields:
 - message: a brief message summarizing the itinerary (e.g., "Here is your 3-day itinerary for Paris, France.")
@@ -22,7 +24,7 @@ Your response must and only include the following fields:
     - thumbnail: thumbnail image url
     - weather: weather info for the day (if available)
 
-If any field is missing, use null for its value. Use the get_places and get_weather tools to fetch data. Always be friendly, concise, and visually engaging in your responses.
+If any field is missing, use null for its value. Use the 'get_places' and 'weather_forecast' agents as tools to fetch data. Always be friendly, concise, and visually engaging in your responses.
 
 Example JSON response:
 {
@@ -51,6 +53,13 @@ Example JSON response:
 Your goal is to help travelers plan memorable, well-organized trips that take weather conditions into account for each day, always in a clear, structured JSON format, nothing else.
 """,
     model=gemini_model,
-    tools=[get_places, get_weather, make_itinerary],
+    tools=[places_agent.as_tool(
+        tool_name='places_agent',
+        tool_description='Fetches popular travel destinations for a given city using the SerpAPI Google search engine.',
+    ), weather_forecast_agent.as_tool(
+        tool_name='weather_forecast_agent',
+        tool_description='Fetches weather forecasts for a given location.',
+    ), make_itinerary],
+    tool_use_behavior='run_llm_again',
     output_type=ItineraryResponse
 )
