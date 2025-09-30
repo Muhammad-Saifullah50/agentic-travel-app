@@ -1,4 +1,4 @@
-from agents import Agent
+from agents import Agent, ModelSettings
 from models.gemini import gemini_model
 from tools.get_weather import get_weather
 from schemas.weather import WeatherResponse
@@ -60,4 +60,6 @@ Your goal is to help travelers plan by giving them the best possible weather ins
   model=gemini_model,
   tools=[get_weather],
   output_type=WeatherResponse,
+      model_settings=ModelSettings(temperature=0.1)
+
 )
