@@ -18,6 +18,7 @@ const emojiForCondition = (condition: string | null | undefined) => {
 };
 
 const WeatherComponent: React.FC<WeatherComponentProps> = ({ data }) => {
+  console.log(data, 'data')
   if (!data || data.length === 0) return null;
   return (
     <div className="w-full max-w-3xl mx-auto my-4 p-4 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-lg">
@@ -40,7 +41,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({ data }) => {
           {data.map((day, idx) => (
             <TableRow key={idx} className="hover:bg-gray-800/60 transition">
               <TableCell className="font-semibold text-blue-200">{day.date ?? "-"}</TableCell>
-              <TableCell className="text-lg capitalize">{emojiForCondition(day.condition)} {day.condition ? day.condition : "-"}</TableCell>
+              <TableCell className=" capitalize">{emojiForCondition(day.condition)} {day.condition ? day.condition : "-"}</TableCell>
               <TableCell className="text-red-400 font-semibold">{day.max_temp_c ?? "-"}°C</TableCell>
               <TableCell className="text-blue-400 font-semibold">{day.min_temp_c ?? "-"}°C</TableCell>
               <TableCell className="text-blue-300">{day.chance_of_rain_pct ?? "-"}%</TableCell>

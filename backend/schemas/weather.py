@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import  Optional
 
 class DailyForecast(BaseModel):
     date: str
@@ -13,7 +13,4 @@ class DailyForecast(BaseModel):
     sunset: Optional[str]
     location: Optional[str]
 
-class WeatherResponse(BaseModel):
-    message: str
-    type: str = "weather"
-    data: List[DailyForecast]
+

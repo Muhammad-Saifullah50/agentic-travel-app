@@ -7,9 +7,3 @@ class Place(BaseModel):
     description: str
     price: str | int
     thumbnail: Optional[AnyUrl] = None  
-
-
-class PlacesResponse(BaseModel):
-    message: str
-    type: str = "places"
-    data: list[Place]

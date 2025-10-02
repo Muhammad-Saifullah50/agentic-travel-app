@@ -6,6 +6,8 @@ load_dotenv()
 
 base_url = os.getenv('GEMINI_BASE_URL')
 api_key = os.getenv('GEMINI_API_KEY')
+model_name = os.getenv('GEMINI_MODEL_NAME')
+
 
 if not base_url or not api_key:
     raise ValueError("GEMINI_BASE_URL or GEMINI_API_KEY environment variable is not set.")
@@ -19,7 +21,7 @@ external_client = AsyncOpenAI(
 """"This is the model imported from this file"""
 
 gemini_model = OpenAIChatCompletionsModel(
-    model='gemini-2.0-flash',
+    model=model_name,
     openai_client=external_client,
 
 )

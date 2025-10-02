@@ -1,26 +1,14 @@
-import json
-
-def extract_forecast_data(json_string:str) -> list[dict[str, str | int | None]]:
+def extract_forecast_data(data: dict[str, str | int]) -> list[dict[str, str | int | None]]:
     """
-    Extracts relevant forecast data for 3 days from the API response string.
+    Extracts relevant forecast data for 3 days from the API response dict.
     """
-    try:
-        data = json.loads(json_string)
-    except json.JSONDecodeError:
-        # Handle case where the JSON string is invalid
-        return []
-
     # 1. Extract location information
     location = data.get('location', {})
     city_country = f"{location.get('name', 'N/A')}, {location.get('country', 'N/A')}"
 
-    # 2. Get the forecast days (up to the first 3)
-    # The 'forecastday' list holds the daily forecast data.
     forecast_days = data.get('forecast', {}).get('forecastday', [])[:3]
 
-    extracted_data:list[dict[str, str | int | None]] = []
-
-    # 3. Iterate over the forecast days and extract desired fields
+    extracted_data = []
     for day_data in forecast_days:
         day_summary = day_data.get('day', {})
         astro = day_data.get('astro', {})
