@@ -19,7 +19,9 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 		const controller = new AbortController();
 
 		try {
-			const res = await fetch("http://localhost:8000/send-message", {
+
+			const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+			const res = await fetch(`${backendUrl}/send-message`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ messages: updatedMessages }),
