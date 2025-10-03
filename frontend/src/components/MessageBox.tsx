@@ -118,18 +118,18 @@ const MessageBox = ({
   return (
     <div
       className={cn(
-        "flex w-full items-center mx-auto my-3 px-10",
+        "flex w-full items-start mx-auto my-3 px-4",
         role === "user" ? "justify-end" : "justify-start"
       )}
     >
       {role === "assistant" && (
-        <div className="flex flex-col items-center mr-2">
+        <div className="flex flex-col items-center mr-2 mt-1">
           <Bot className="h-8 w-8 text-blue-400 " />
         </div>
       )}
       <div
         className={cn(
-          "relative px-6 py-3 rounded-3xl text-base",
+          "relative px-6 py-3 rounded-3xl text-base max-w-[80%] break-words",
           "transition-all",
           role === "user"
             ? "ml-2 bg-gradient-sunset text-black"
@@ -139,7 +139,7 @@ const MessageBox = ({
         {content}
       </div>
       {role === "user" && (
-        <div className="flex flex-col items-center ml-2 justify-center">
+        <div className="flex flex-col items-center ml-2 justify-center mt-1">
           <User className="h-8 w-8 text-blue-500" />
         </div>
       )}

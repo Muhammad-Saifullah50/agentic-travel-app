@@ -3,6 +3,7 @@
 import { use, useState } from "react";
 import PromptForm from "@/components/PromptForm";
 import MessageBox from "@/components/MessageBox";
+import Loader from "@/components/Loader";
 
 const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 
@@ -10,6 +11,7 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 	const [messages, setMessages] = useState<
 		{ role: "user" | "assistant"; content: string }[]
 	>([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSendMessage = async (prompt: string, clear: () => void) => {
 		setMessages((prev) => [...prev, { role: "user", content: prompt }]);
@@ -17,9 +19,11 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 
 		const updatedMessages = [...messages, { role: "user", content: prompt }];
 		const controller = new AbortController();
+		
+		// Show loader when starting to fetch response
+		setIsLoading(true);
 
 		try {
-
 			const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 			const res = await fetch(`${backendUrl}/send-message`, {
 				method: "POST",
@@ -59,13 +63,16 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 				...prev,
 				{ role: "assistant", content: err.message },
 			]);
+		} finally {
+			// Hide loader when response is complete or error occurs
+			setIsLoading(false);
 		}
 	};
 
 
 	return (
 		<div className="min-h-screen bg-background flex flex-col pt-8 pb-32">
-			<div className="flex-1 w-full mx-auto py-10 overflow-y-scroll max-w-7xl">
+			<div className="flex-1 w-full max-w-4xl mx-auto py-10 overflow-y-scroll max-h-[calc(100vh-10vh)] px-4">
 				{messages.map((msg, idx) => (
 					<MessageBox
 						key={idx}
@@ -73,6 +80,7 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 						text={msg.content}
 					/>
 				))}
+				{isLoading && <Loader />}
 			</div>
 			<div className="fixed bottom-0 left-0 right-0 z-50 bg-transparent">
 				<PromptForm
