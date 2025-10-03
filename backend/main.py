@@ -13,7 +13,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     # Adjust the origins as needed for your frontend application
-    allow_origins=["http://localhost:3000", 'https://agentic-travel-app.vercel.app/'],
+    allow_origins=["http://localhost:3000", 'https://agentic-travel-app.vercel.app'],
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
