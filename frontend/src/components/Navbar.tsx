@@ -16,7 +16,7 @@ const Navbar = () => {
             <div className="p-2 bg-gradient-ocean rounded-lg">
               <Plane className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold">Agentic Travel App </span>
+            <span className="text-xl font-bold">AgentiaTravel</span>
           </div>
 
   

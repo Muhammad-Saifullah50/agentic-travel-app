@@ -34,10 +34,7 @@ const CTA = () => {
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
             <span>No credit card required</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
-            <span>190+ countries covered</span>
-          </div>
+         
         </div>
       </div>
       
