@@ -129,7 +129,7 @@ const MessageBox = ({
       )}
       <div
         className={cn(
-          "relative px-6 py-3 rounded-3xl text-base max-w-[80%] break-words",
+          "relative px-6 py-3 rounded-3xl text-base break-words",
           "transition-all",
           role === "user"
             ? "ml-2 bg-gradient-sunset text-black"

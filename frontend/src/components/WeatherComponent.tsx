@@ -21,7 +21,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({ data }) => {
   console.log(data, 'data')
   if (!data || data.length === 0) return null;
   return (
-    <div className="w-full max-w-3xl mx-auto my-4 p-4 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-lg">
+    <div className="w-full max-w-3xl overflow-x-scroll mx-auto my-4 p-4 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-lg">
       <h2 className="text-xl font-bold mb-3 text-blue-300 flex items-center gap-2 uppercase tracking-wide">Weather Forecast <span>🌦️</span></h2>
       <Table className="rounded-lg overflow-hidden border border-gray-700 text-xs">
         <TableHeader className="bg-gray-800">

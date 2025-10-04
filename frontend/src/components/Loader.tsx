@@ -3,9 +3,9 @@ import React from 'react';
 
 const Loader = () => {
   return (
-    <div className="flex w-full items-center mx-auto my-3 px-10 gap-4">
+    <div className="flex w-full mx-auto my-6 px-4 gap-3">
       <Bot className="h-8 w-8 text-blue-400 animate-spin" />
-      <span className="text-blue">Loading...</span>
+      <span className="text-blue-400 text-lg font-medium">Loading...</span>
       
     </div>
   );

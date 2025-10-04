@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import PromptForm from "@/components/PromptForm";
 import MessageBox from "@/components/MessageBox";
 import Loader from "@/components/Loader";
@@ -12,6 +12,10 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 		{ role: "user" | "assistant"; content: string }[]
 	>([]);
 	const [isLoading, setIsLoading] = useState(false);
+	
+	// Create refs for the messages container and scroll target
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const messagesContainerRef = useRef<HTMLDivElement>(null);
 
 	const handleSendMessage = async (prompt: string, clear: () => void) => {
 		setMessages((prev) => [...prev, { role: "user", content: prompt }]);
@@ -66,13 +70,26 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 		} finally {
 			// Hide loader when response is complete or error occurs
 			setIsLoading(false);
-		}
+		};
 	};
 
+	// Function to scroll to bottom
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
 
+	// Scroll to bottom when messages change
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages, isLoading]);
+
+	
 	return (
 		<div className="min-h-screen bg-background flex flex-col pt-8 pb-32">
-			<div className="flex-1 w-full max-w-4xl mx-auto py-10 overflow-y-scroll max-h-[calc(100vh-10vh)] px-4">
+			<div 
+				ref={messagesContainerRef}
+				className="flex-1 w-full max-w-7xl mx-auto py-10 overflow-y-scroll max-h-[calc(100vh-10vh)] px-4"
+			>
 				{messages.map((msg, idx) => (
 					<MessageBox
 						key={idx}
@@ -81,6 +98,7 @@ const ChatPage = ({ searchParams }: { searchParams: { query: string } }) => {
 					/>
 				))}
 				{isLoading && <Loader />}
+				<div ref={messagesEndRef} />
 			</div>
 			<div className="fixed bottom-0 left-0 right-0 z-50 bg-transparent">
 				<PromptForm

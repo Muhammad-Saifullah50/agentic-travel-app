@@ -4,11 +4,7 @@ import {
   Brain, 
   Map, 
   Calendar, 
-  Globe, 
-  Zap, 
-  Heart,
-  Clock,
-  Users
+  Globe
 } from "lucide-react";
 
 const features = [
@@ -36,30 +32,7 @@ const features = [
     description: "From hidden local gems to world-famous landmarks. Access curated recommendations for every destination worldwide.",
     badge: "Worldwide"
   },
-  {
-    icon: Zap,
-    title: "Instant Updates",
-    description: "Get real-time notifications about flight changes, weather updates, and local recommendations delivered instantly.",
-    badge: "Real-time"
-  },
-  {
-    icon: Heart,
-    title: "Personal Touch",
-    description: "Learn from your travel history and preferences to suggest experiences that truly resonate with your unique style.",
-    badge: "Personalized"
-  },
-  {
-    icon: Clock,
-    title: "Save Time",
-    description: "What used to take hours of research now happens in minutes. Spend less time planning, more time exploring.",
-    badge: "Efficient"
-  },
-  {
-    icon: Users,
-    title: "Group Travel",
-    description: "Coordinate complex group trips with shared preferences, split costs, and collaborative planning features.",
-    badge: "Collaborative"
-  }
+
 ];
 
 const Features = () => {

@@ -1,3 +1,4 @@
+'use client';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import mountainsImg from "../../public/assets/mountains.jpg";
 import cityImg from "../../public/assets/city.jpg";
 import templeImg from "../../public/assets/temple.jpg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const destinations = [
 	{
@@ -17,7 +19,8 @@ const destinations = [
 		description:
 			"Breathtaking mountain vistas, pristine hiking trails, and charming alpine villages await in this stunning Swiss adventure.",
 		tags: ["Mountains", "Hiking", "Nature"],
-		duration: "7 days",
+		duration: "3 days",
+		prompt: 'Plan a trip to Swiss Alps in Switzerland'
 	},
 	{
 		id: 2,
@@ -28,7 +31,8 @@ const destinations = [
 		description:
 			"Experience the perfect blend of ancient traditions and cutting-edge technology in Japan's vibrant capital city.",
 		tags: ["City", "Culture", "Technology"],
-		duration: "5 days",
+		duration: "3 days",
+		prompt: 'Plan a trip to Tokyo in Japan'
 	},
 	{
 		id: 3,
@@ -39,11 +43,14 @@ const destinations = [
 		description:
 			"Discover mystical temple complexes hidden in lush jungles, where history and nature create magical experiences.",
 		tags: ["History", "Culture", "Adventure"],
-		duration: "6 days",
+		duration: "3 days",
+		prompt: 'Plan a trip to Angkor Wat in Cambodia'
 	},
 ];
 
 const Destinations = () => {
+
+	const router = useRouter();
 	return (
 		<section className="py-24 px-6 bg-background">
 			<div className="max-w-7xl mx-auto">
@@ -118,7 +125,7 @@ const Destinations = () => {
 									))}
 								</div>
 
-								<Button variant="ghost" className="w-full group/btn">
+								<Button variant="ghost" className="w-full group/btn" onClick={() => router.push(`/chat?query=${encodeURIComponent(destination.prompt)}`)}>
 									Plan This Trip
 									<ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
 								</Button>
